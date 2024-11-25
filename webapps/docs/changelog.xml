@@ -1,0 +1,241 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Licensed to the Apache Software Foundation (ASF) under one or more
+  contributor license agreements.  See the NOTICE file distributed with
+  this work for additional information regarding copyright ownership.
+  The ASF licenses this file to You under the Apache License, Version 2.0
+  (the "License"); you may not use this file except in compliance with
+  the License.  You may obtain a copy of the License at
+
+      http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+<!DOCTYPE document [
+  <!ENTITY project SYSTEM "project.xml">
+
+  <!-- DTD is used to validate changelog structure at build time. BZ 64931. -->
+
+  <!ELEMENT document (project?, properties, body)>
+  <!ATTLIST document url CDATA #REQUIRED>
+
+  <!-- body and title are used both in project.xml and in this document -->
+  <!ELEMENT body ANY>
+  <!ELEMENT title (#PCDATA)>
+
+  <!-- Elements of project.xml -->
+  <!ELEMENT project (title, logo, body)>
+  <!ATTLIST project name CDATA #REQUIRED>
+  <!ATTLIST project href CDATA #REQUIRED>
+
+  <!ELEMENT logo (#PCDATA)>
+  <!ATTLIST logo href CDATA #REQUIRED>
+
+  <!ELEMENT menu (item+)>
+  <!ATTLIST menu name CDATA #REQUIRED>
+
+  <!ELEMENT item EMPTY>
+  <!ATTLIST item name CDATA #REQUIRED>
+  <!ATTLIST item href CDATA #REQUIRED>
+
+  <!-- Elements of this document -->
+  <!ELEMENT properties (author*, title, no-comments) >
+  <!ELEMENT author (#PCDATA)>
+  <!ATTLIST author email CDATA #IMPLIED>
+  <!ELEMENT no-comments EMPTY>
+
+  <!ELEMENT section (subsection)*>
+  <!ATTLIST section name CDATA #REQUIRED>
+  <!ATTLIST section rtext CDATA #IMPLIED>
+
+  <!ELEMENT subsection (changelog+)>
+  <!ATTLIST subsection name CDATA #REQUIRED>
+
+  <!ELEMENT changelog (add|update|fix|scode|docs|design)*>
+  <!ELEMENT add ANY>
+  <!ELEMENT update ANY>
+  <!ELEMENT fix ANY>
+  <!ELEMENT scode ANY>
+  <!ELEMENT docs ANY>
+  <!ELEMENT design ANY>
+
+  <!ELEMENT bug (#PCDATA)>
+  <!ELEMENT rev (#PCDATA)>
+  <!ELEMENT pr (#PCDATA)>
+
+  <!-- Random HTML markup tags. Add more here as needed. -->
+  <!ELEMENT a (#PCDATA)>
+  <!ATTLIST a href CDATA #REQUIRED>
+  <!ATTLIST a rel CDATA #IMPLIED>
+
+  <!ELEMENT b (#PCDATA)>
+  <!ELEMENT code (#PCDATA)>
+  <!ELEMENT em (#PCDATA)>
+  <!ELEMENT strong (#PCDATA)>
+  <!ELEMENT tt (#PCDATA)>
+]>
+<?xml-stylesheet type="text/xsl" href="tomcat-docs.xsl"?>
+<document url="changelog.html">
+
+  &project;
+
+  <properties>
+    <title>Changelog</title>
+    <no-comments />
+  </properties>
+
+<body>
+<!--
+  Subsection ordering:
+  General, Catalina, Coyote, Jasper, Cluster, WebSocket, Web applications,
+  Extras, Tribes, jdbc-pool, Other
+
+  Item Ordering:
+
+  Fixes having an issue number are sorted by their number, ascending.
+
+  There is no ordering by add/update/fix/scode/docs/design.
+
+  Other fixed issues are added to the end of the list, chronologically.
+  They eventually become mixed with the numbered issues (i.e., numbered
+  issues do not "pop up" wrt. others).
+-->
+<section name="Tomcat 12.0.0-M1 (markt)" rtext="in development">
+  <subsection name="General">
+    <changelog>
+      <scode>
+        This release contains all of the changes up to and including those in
+        Apache Tomcat 11.0.1 plus the additional changes listed below. (markt)
+      </scode>
+      <update>
+        The minimum Java version has been updated to Java 21. (markt)
+      </update>
+    </changelog>
+  </subsection>
+  <subsection name="Catalina">
+    <changelog>
+      <add>
+        Add support for the new Servlet API method
+        <code>HttpServletResponse.sendEarlyHints()</code>. (markt)
+      </add>
+      <!-- Entries for backport and removal before 12.0.0-M1 below this line -->
+      <fix>
+        Add special handling for the <code>protocols</code> attribute of
+        <code>SSLHostConfig</code> in storeconfig. (remm)
+      </fix>
+      <fix>
+        <bug>69442</bug>: Fix case sensitive check on <code>content-type</code>
+        when parsing request parameters. (remm)
+      </fix>
+      <fix>
+        Compatibility of generated embedded code with components where
+        constructors or property related methods throw a checked exception.
+        (remm)
+      </fix>
+      <fix>
+        The previous fix for incosistent resource metadata during concurrent
+        reads and writes was incomplete. (markt)
+      </fix>
+      <fix>
+        <pr>780</pr>: Fix <code>content-range</code> header length. Submitted
+        by Justin Chen. (remm)
+      </fix>
+      <fix>
+        <bug>69444</bug>: Ensure that the
+        <code>jakarta.servlet.error.message</code> request attribute is set when
+        an application defined error page is called. (markt)
+      </fix>
+      <fix>
+        Avoid quotes for numeric values in the JSON generated by the status
+        servlet. (remm)
+      </fix>
+      <add>
+        Add strong ETag support for the WebDAV and default servlet, which can
+        be enabled by using the <code>useStrongETags</code> init parameter with
+        a value set to <code>true</code>. The ETag generated will be a SHA-1
+        checksum of the resource content. (remm)
+      </add>
+      <fix>
+        Use client locale for directory listings. (remm)
+      </fix>
+      <fix>
+        <bug>69439</bug>: Improve the handling of multiple
+        <code>Cache-Control</code> headers in the <code>ExpiresFilter</code>.
+        Based on pull request <pr>777</pr> by Chenjp. (markt)
+      </fix>
+      <fix>
+        <bug>69447</bug>: Update the support for caching classes the web
+        application class loader cannot find to take account of classes loaded
+        from external repositories. Prior to this fix, these classes could be
+        incorrectly marked as not found. (markt)
+      </fix>
+      <fix>
+        <bug>69466</bug>: Rework handling of HEAD requests. Headers explicitly
+        set by users will not be removed and any header present in a HEAD
+        request will also be present in the equivalent GET request. There may be
+        some headers, as per RFC 9110, section 9.3.2, that are present in a GET
+        request that are not present in the equivalent HEAD request. (markt)
+      </fix>
+      <fix>
+        <bug>69471</bug>: Log instances of <code>CloseNowException</code> caught
+        by <code>ApplicationDispatcher.invoke()</code> at debug level rather
+        than error level as they are very likely to have been caused by a client
+        disconnection or similar I/O issue. (markt)
+      </fix>
+      <add>
+        Add a test case for the fix for <bug>69442</bug>. Also refactor
+        references to <code>application/x-www-form-urlencoded</code>. Based on
+        pull request <pr>779</pr> by Chenjp. (markt)
+      </add>
+    </changelog>
+  </subsection>
+  <subsection name="Coyote">
+    <changelog>
+      <update>
+        Change the default value of the <code>cookiesWithoutEquals</code>
+        attribute of the <code>Rfc6265CookieProcessor</code> from
+        <code>name</code> to <code>ignore</code>. (markt)
+      </update>
+      <update>
+        Remove default password value (was <code>changeit</code>) for the
+        <code>certificateKeystorePassword</code> attribute of a certificate.
+        (remm)
+      </update>
+      <!-- Entries for backport and removal before 12.0.0-M1 below this line -->
+    </changelog>
+  </subsection>
+  <subsection name="Jasper">
+    <changelog>
+      <add>
+        Add support for the new Elvis operator (<code>:?</code>) in Jakarta
+        Expression language. (markt)
+      </add>
+      <add>
+        Extend the existing <code>+</code> operator in Jakarta Expression
+        Language to support mergin <code>Map</code>Map and <code>Set</code>Set
+        and concatenating <code>List</code>s. (markt)
+      </add>
+      <update>
+        The defaults for <code>compilerSourceVM</code> and
+        <code>compilerTargetVM</code> have been updated to 21 to align with Java
+        21 being the minimum Java version required for Tomcat 12. (markt)
+      </update>
+      <!-- Entries for backport and removal before 12.0.0-M1 below this line -->
+    </changelog>
+  </subsection>
+  <subsection name="Other">
+    <changelog>
+      <update>
+        Update Derby to 10.17.1.0. (markt)
+      </update>
+      <!-- Entries for backport and removal before 12.0.0-M1 below this line -->
+    </changelog>
+  </subsection>
+</section>
+</body>
+</document>
+
